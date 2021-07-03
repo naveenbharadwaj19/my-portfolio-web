@@ -1,113 +1,233 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_button/flutter_animated_button.dart';
+import 'package:lottie/lottie.dart';
+import 'package:nb_portfolio/icons/pyramid_icon_icons.dart';
+import 'package:nb_portfolio/widgets/landing_page_body.dart';
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  await Firebase.initializeApp();
+  runApp(Root());
 }
 
-class MyApp extends StatelessWidget {
+class Root extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'my_portfolio',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+        fontFamily: "Ubuntu",
+        buttonColor: Colors.white,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: LandingPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
+class LandingPage extends StatelessWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  Widget build(BuildContext context) {
+    return Material(
+      child: Container(
+        decoration: BoxDecoration(
+          image: const DecorationImage(
+              image: AssetImage("assets/images/bg_1.jpg"), fit: BoxFit.cover),
+        ),
+        child: Column(
+          children: [
+            _AppBar(),
+            LandingPageBody(),
+            FunnyFacts(),
+            emailAddress(context),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _AppBar extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _sampleButton(context),
+          _LogoTitle(),
+          _projects(context),
+        ],
+      ),
+    );
+  }
+}
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+Widget _sampleButton(BuildContext context) {
+  return Align(
+    alignment: Alignment.topLeft,
+    child: AnimatedButton(
+      width: 100,
+      text: 'Github',
+      isReverse: true,
+      selectedTextColor: Colors.black,
+      transitionType: TransitionType.CENTER_LR_IN,
+      backgroundColor: Colors.transparent,
+      borderColor: Colors.transparent,
+      textStyle: TextStyle(fontSize: 16, color: Theme.of(context).buttonColor),
+      onPress: () {},
+    ),
+  );
+}
+
+class _LogoTitle extends StatefulWidget {
+  @override
+  __LogoTitleState createState() => __LogoTitleState();
+}
+
+class __LogoTitleState extends State<_LogoTitle> {
+  bool isTitleAnimationCompleted = false;
+  Widget title(BuildContext context) {
+    return Text(
+      "N.B",
+      style: TextStyle(
+          color: Theme.of(context).buttonColor,
+          fontFamily: "ZenTokyoZoo",
+          fontSize: 22),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+    return Row(
+      children: [
+        Icon(
+          PyramidIcon.noun_pyramid_1040358,
+          size: 50,
+          color: Theme.of(context).buttonColor,
+        ),
+        Container(
+          margin: const EdgeInsets.all(10),
+          child: isTitleAnimationCompleted
+              ? title(context)
+              : AnimatedTextKit(
+                  totalRepeatCount: 1,
+                  displayFullTextOnTap: true,
+                  onFinished: () {
+                    setState(() {
+                      isTitleAnimationCompleted = true;
+                    });
+                  },
+                  animatedTexts: [
+                    FlickerAnimatedText(
+                      "N.B",
+                      speed: const Duration(seconds: 3),
+                      textStyle: TextStyle(
+                          color: Theme.of(context).buttonColor,
+                          fontFamily: "ZenTokyoZoo",
+                          fontSize: 22),
+                    ),
+                  ],
+                ),
+        ),
+      ],
+    );
+  }
+}
+
+Widget emailAddress(BuildContext context) {
+  return Container(
+    alignment: Alignment.bottomLeft,
+    margin: const EdgeInsets.only(bottom: 5, left: 10),
+    child: InkWell(
+      splashColor: Colors.transparent,
+      child: Container(
+        width: 80,
+        child: Lottie.asset(
+          "assets/animations/send_email.json",
+          repeat: false,
+          height: 80,
+          width: 20,
+          alignment: Alignment.center,
+          fit: BoxFit.cover,
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      // todo add email link
+      onTap: () => print("email..."),
+    ),
+  );
+}
+
+Widget _projects(BuildContext context) {
+  return Align(
+    alignment: Alignment.topRight,
+    child: GestureDetector(
+      onTap: () => print("view project"),
+      child: Wrap(
+        children: [
+          LottieBuilder.asset(
+            "assets/animations/view_project.json",
+            height: 40,
+            width: 30,
+            fit: BoxFit.cover,
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 10, left: 20),
+            child: Text(
+              "View projects",
+              style:
+                  TextStyle(color: Theme.of(context).buttonColor, fontSize: 14),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+class FunnyFacts extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        margin: const EdgeInsets.only(top: 20, right: 20, bottom: 20),
+        child: Align(
+          alignment: Alignment.bottomRight,
+          child: DefaultTextStyle(
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+            style:
+                TextStyle(fontSize: 14, color: Theme.of(context).buttonColor),
+            child: AnimatedTextKit(
+              animatedTexts: [
+                ScaleAnimatedText(
+                  "The first computer “bug” was an actual real-life bug",
+                  duration: const Duration(seconds: 7),
+                ),
+                ScaleAnimatedText(
+                  "There are more than 700 different programming languages",
+                  duration: const Duration(seconds: 7),
+                ),
+                ScaleAnimatedText(
+                  "Many programming languages share the same structure",
+                  duration: const Duration(seconds: 7),
+                ),
+                ScaleAnimatedText(
+                  "APIs are like stars, once a class is there everybody will assume it will always be there",
+                  duration: const Duration(seconds: 7),
+                ),
+                ScaleAnimatedText(
+                  "Programmers will start the count from zero, not one",
+                  duration: const Duration(seconds: 7),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
