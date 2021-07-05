@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_button/flutter_animated_button.dart';
 import 'package:lottie/lottie.dart';
+import 'package:nb_portfolio/screens/skills_screen.dart';
 
 class LandingPageBody extends StatelessWidget {
   @override
@@ -9,6 +13,7 @@ class LandingPageBody extends StatelessWidget {
       children: [
         _catchText(context),
         _Animation(),
+        _skillButton(context),
       ],
     );
   }
@@ -58,3 +63,27 @@ Widget _catchText(BuildContext context) {
   );
 }
 
+Widget _skillButton(BuildContext context) {
+  return Container(
+    margin: const EdgeInsets.only(top: 100),
+    child: Align(
+      alignment: Alignment.centerRight,
+      child: RotatedBox(
+        quarterTurns: 1,
+        child: AnimatedButton(
+            width: 100,
+            text: 'Skills',
+            isReverse: true,
+            selectedTextColor: Colors.black,
+            transitionType: TransitionType.CENTER_LR_IN,
+            backgroundColor: Colors.transparent,
+            borderColor: Colors.transparent,
+            textStyle:
+                TextStyle(fontSize: 16, color: Theme.of(context).buttonColor),
+            onPress: () {
+              Timer(Duration(seconds: 1),()=> Navigator.pushReplacementNamed(context, SkillsScreen.routeName));
+            }),
+      ),
+    ),
+  );
+}

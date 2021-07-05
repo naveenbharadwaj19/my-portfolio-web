@@ -1,10 +1,12 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animated_button/flutter_animated_button.dart';
 import 'package:lottie/lottie.dart';
-import 'package:nb_portfolio/icons/pyramid_icon_icons.dart';
+import 'package:nb_portfolio/models/url_launcher.dart';
+import 'package:nb_portfolio/screens/skills_screen.dart';
+import 'package:nb_portfolio/widgets/custom_app_bar_widget.dart';
+import 'package:nb_portfolio/widgets/funny_facts.dart';
 import 'package:nb_portfolio/widgets/landing_page_body.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 void main() async {
   await Firebase.initializeApp();
@@ -16,18 +18,35 @@ class Root extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'my_portfolio',
+      title: 'N.B - Portfolio',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: "Ubuntu",
         buttonColor: Colors.white,
       ),
+      builder: (context, widget) => ResponsiveWrapper.builder(
+        widget,
+        defaultScale: true,
+        minWidth: 420,
+        breakpoints: [
+          ResponsiveBreakpoint.resize(420, name: MOBILE),
+          ResponsiveBreakpoint.autoScale(800, name: TABLET),
+          ResponsiveBreakpoint.resize(1000, name: DESKTOP),
+          ResponsiveBreakpoint.autoScale(2460, name: '4K'),
+        ],
+        backgroundColor: Colors.red,
+      ),
+      routes: {
+        LandingPage.routeName: (context) => LandingPage(),
+        SkillsScreen.routeName: (context) => SkillsScreen(),
+      },
       home: LandingPage(),
     );
   }
 }
 
 class LandingPage extends StatelessWidget {
+  static const routeName = "home";
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -38,102 +57,13 @@ class LandingPage extends StatelessWidget {
         ),
         child: Column(
           children: [
-            _AppBar(),
+            CustomAppBar(),
             LandingPageBody(),
             FunnyFacts(),
             emailAddress(context),
           ],
         ),
       ),
-    );
-  }
-}
-
-class _AppBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _sampleButton(context),
-          _LogoTitle(),
-          _projects(context),
-        ],
-      ),
-    );
-  }
-}
-
-Widget _sampleButton(BuildContext context) {
-  return Align(
-    alignment: Alignment.topLeft,
-    child: AnimatedButton(
-      width: 100,
-      text: 'Github',
-      isReverse: true,
-      selectedTextColor: Colors.black,
-      transitionType: TransitionType.CENTER_LR_IN,
-      backgroundColor: Colors.transparent,
-      borderColor: Colors.transparent,
-      textStyle: TextStyle(fontSize: 16, color: Theme.of(context).buttonColor),
-      onPress: () {},
-    ),
-  );
-}
-
-class _LogoTitle extends StatefulWidget {
-  @override
-  __LogoTitleState createState() => __LogoTitleState();
-}
-
-class __LogoTitleState extends State<_LogoTitle> {
-  bool isTitleAnimationCompleted = false;
-  Widget title(BuildContext context) {
-    return Text(
-      "N.B",
-      style: TextStyle(
-          color: Theme.of(context).buttonColor,
-          fontFamily: "ZenTokyoZoo",
-          fontSize: 22),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(
-          PyramidIcon.noun_pyramid_1040358,
-          size: 50,
-          color: Theme.of(context).buttonColor,
-        ),
-        Container(
-          margin: const EdgeInsets.all(10),
-          child: isTitleAnimationCompleted
-              ? title(context)
-              : AnimatedTextKit(
-                  totalRepeatCount: 1,
-                  displayFullTextOnTap: true,
-                  onFinished: () {
-                    setState(() {
-                      isTitleAnimationCompleted = true;
-                    });
-                  },
-                  animatedTexts: [
-                    FlickerAnimatedText(
-                      "N.B",
-                      speed: const Duration(seconds: 3),
-                      textStyle: TextStyle(
-                          color: Theme.of(context).buttonColor,
-                          fontFamily: "ZenTokyoZoo",
-                          fontSize: 22),
-                    ),
-                  ],
-                ),
-        ),
-      ],
     );
   }
 }
@@ -156,78 +86,7 @@ Widget emailAddress(BuildContext context) {
         ),
       ),
       // todo add email link
-      onTap: () => print("email..."),
+      onTap: () => openEmail(),
     ),
   );
-}
-
-Widget _projects(BuildContext context) {
-  return Align(
-    alignment: Alignment.topRight,
-    child: GestureDetector(
-      onTap: () => print("view project"),
-      child: Wrap(
-        children: [
-          LottieBuilder.asset(
-            "assets/animations/view_project.json",
-            height: 40,
-            width: 30,
-            fit: BoxFit.cover,
-          ),
-          Container(
-            margin: const EdgeInsets.only(top: 10, left: 20),
-            child: Text(
-              "View projects",
-              style:
-                  TextStyle(color: Theme.of(context).buttonColor, fontSize: 14),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-class FunnyFacts extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.only(top: 20, right: 20, bottom: 20),
-        child: Align(
-          alignment: Alignment.bottomRight,
-          child: DefaultTextStyle(
-            maxLines: 4,
-            overflow: TextOverflow.ellipsis,
-            style:
-                TextStyle(fontSize: 14, color: Theme.of(context).buttonColor),
-            child: AnimatedTextKit(
-              animatedTexts: [
-                ScaleAnimatedText(
-                  "The first computer “bug” was an actual real-life bug",
-                  duration: const Duration(seconds: 7),
-                ),
-                ScaleAnimatedText(
-                  "There are more than 700 different programming languages",
-                  duration: const Duration(seconds: 7),
-                ),
-                ScaleAnimatedText(
-                  "Many programming languages share the same structure",
-                  duration: const Duration(seconds: 7),
-                ),
-                ScaleAnimatedText(
-                  "APIs are like stars, once a class is there everybody will assume it will always be there",
-                  duration: const Duration(seconds: 7),
-                ),
-                ScaleAnimatedText(
-                  "Programmers will start the count from zero, not one",
-                  duration: const Duration(seconds: 7),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
